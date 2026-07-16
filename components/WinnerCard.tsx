@@ -37,7 +37,7 @@ export function WinnerCard({
               <Trophy className="h-3 w-3" />
               Juara {method}
             </Badge>
-            <CardTitle className="text-xl text-teal-900">
+            <CardTitle className="break-words text-xl text-teal-900">
               {alternative.id} — {alternative.name}
             </CardTitle>
             <CardDescription className="mt-1">
@@ -50,12 +50,16 @@ export function WinnerCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 text-sm min-[480px]:grid-cols-3 sm:grid-cols-5">
           <Metric label="Gula" value={`${alternative.values.sugar} g`} />
           <Metric label="Natrium" value={`${alternative.values.sodium} mg`} />
           <Metric label="Serat" value={`${alternative.values.fiber} g`} />
           <Metric label="Harga" value={formatCurrency(alternative.values.price)} />
-          <Metric label="Kemudahan" value={`${alternative.values.ease}/5`} />
+          <Metric
+            label="Kemudahan"
+            value={`${alternative.values.ease}/5`}
+            className="col-span-2 min-[480px]:col-span-1 sm:col-span-1"
+          />
         </div>
         <div>
           <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-800">
@@ -78,13 +82,23 @@ export function WinnerCard({
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function Metric({
+  label,
+  value,
+  className,
+}: {
+  label: string;
+  value: string;
+  className?: string;
+}) {
   return (
-    <div className="rounded-lg border border-teal-100 bg-white/80 px-2.5 py-2">
+    <div
+      className={`rounded-lg border border-teal-100 bg-white/80 px-2.5 py-2 ${className ?? ""}`}
+    >
       <p className="text-[10px] uppercase tracking-wide text-slate-400">
         {label}
       </p>
-      <p className="text-sm font-semibold text-slate-800">{value}</p>
+      <p className="break-words text-sm font-semibold text-slate-800">{value}</p>
     </div>
   );
 }

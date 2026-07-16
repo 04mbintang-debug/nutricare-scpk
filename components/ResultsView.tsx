@@ -80,14 +80,14 @@ export function ResultsView() {
             ))}
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button asChild variant="outline">
+        <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+          <Button asChild variant="outline" className="flex-1 sm:flex-none">
             <Link href="/input">
               <ArrowLeft className="h-4 w-4" />
               Ubah Input
             </Link>
           </Button>
-          <Button asChild variant="secondary">
+          <Button asChild variant="secondary" className="flex-1 sm:flex-none">
             <Link href="/input">
               <RefreshCw className="h-4 w-4" />
               Hitung Ulang

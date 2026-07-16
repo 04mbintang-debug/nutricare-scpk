@@ -10,10 +10,16 @@
   --teal-glow: rgba(15, 118, 110, 0.08);
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: "DM Sans", system-ui, sans-serif;
+  overscroll-behavior-x: none;
 }
 
 h1,
