@@ -1,27 +1,50 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #f4faf8;
+  --foreground: #0f172a;
+  --teal-glow: rgba(15, 118, 110, 0.08);
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: "Fraunces", Georgia, serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+
+  .bg-mesh {
+    background-color: #f4faf8;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(45, 212, 191, 0.25), transparent),
+      radial-gradient(ellipse 60% 40% at 90% 10%, rgba(15, 118, 110, 0.12), transparent),
+      radial-gradient(ellipse 50% 30% at 50% 100%, rgba(20, 184, 166, 0.1), transparent);
+  }
+}
+
+/* Hilangkan panah spinner pada input angka — user mengetik saja */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }

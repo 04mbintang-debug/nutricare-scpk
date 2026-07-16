@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NutriCare Decision Support
 
-## Getting Started
+Prototype **Sistem Pendukung Keputusan (SPK)** rekomendasi menu harian untuk penderita penyakit kronis, menggunakan metode MADM **SAW** dan **TOPSIS** yang ditampilkan berdampingan.
 
-First, run the development server:
+> **Disclaimer:** Bukan alat diagnosis medis. Hasil rekomendasi bersifat edukatif dan harus dikonsultasikan dengan tenaga kesehatan.
+
+## Tech Stack
+
+- Next.js 14 (App Router) + TypeScript
+- Tailwind CSS + komponen bergaya shadcn/ui
+- Recharts (perbandingan ranking)
+- Perhitungan sepenuhnya di browser (tanpa database/backend)
+
+## Menjalankan Lokal
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Script Lain
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build      # production build
+npm run start      # jalankan hasil build
+npm run verify     # sanity check algoritma SAW & TOPSIS
+```
 
-## Learn More
+## Deploy ke Vercel
 
-To learn more about Next.js, take a look at the following resources:
+Tidak ada environment variable yang wajib.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Opsi A — CLI**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm i -g vercel
+npx vercel --prod
+```
 
-## Deploy on Vercel
+**Opsi B — GitHub**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push repo ke GitHub
+2. Import project di [vercel.com/new](https://vercel.com/new)
+3. Deploy (framework Next.js terdeteksi otomatis)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Struktur Utama
+
+```
+app/           # halaman: /, /input, /hasil, /tentang
+lib/           # data.ts, saw.ts, topsis.ts
+components/    # UI + tabel + chart
+```
+
+## Alur Penggunaan
+
+1. **Beranda** — gambaran sistem & disclaimer
+2. **Input** — data pasien, preferensi, bobot kriteria (auto-normalisasi 100%)
+3. **Hasil** — matriks keputusan, tabel SAW & TOPSIS, chart perbandingan, kartu menu terbaik
+4. **Tentang** — penjelasan langkah metode SAW & TOPSIS
