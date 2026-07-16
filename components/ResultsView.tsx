@@ -58,7 +58,7 @@ export function ResultsView() {
   const sameWinner = winners.saw.alternative.id === winners.topsis.alternative.id;
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
@@ -135,7 +135,7 @@ export function ResultsView() {
 
       <DecisionMatrixTable />
 
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid min-w-0 gap-6 xl:grid-cols-2">
         <SawRankingTable results={saw} />
         <TopsisRankingTable results={topsis.results} />
       </div>

@@ -25,7 +25,7 @@ export default function RootLayout({
     <html lang="id" className="h-full overflow-x-hidden">
       <body className="min-h-screen w-full overflow-x-hidden bg-mesh antialiased">
         <Navbar />
-        <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+        <main className="mx-auto w-full min-w-0 max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
           {children}
         </main>
         <footer className="border-t border-teal-100 bg-white/60">
