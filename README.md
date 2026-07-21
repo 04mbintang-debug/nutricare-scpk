@@ -56,6 +56,17 @@ components/    # UI + tabel + chart
 ## Alur Penggunaan
 
 1. **Beranda** — gambaran sistem & disclaimer
-2. **Input** — data pasien, preferensi, bobot kriteria (auto-normalisasi 100%)
+2. **Input** — data pasien (BB, TB, umur, budget), preferensi, bobot kriteria C1–C4
 3. **Hasil** — matriks keputusan, tabel SAW & TOPSIS, chart perbandingan, kartu menu terbaik
 4. **Tentang** — penjelasan langkah metode SAW & TOPSIS
+
+## Kriteria MADM (revisi)
+
+| Kode | Nama | Tipe | Bobot |
+|------|------|------|-------|
+| C1 | Kesesuaian Berat Badan | Benefit | 25% |
+| C2 | Kesesuaian Tinggi Badan | Benefit | 25% |
+| C3 | Kesesuaian Umur | Benefit | 20% |
+| C4 | Budget / Harga Menu | Cost | 30% |
+
+Gula, natrium, dan serat adalah **informasi nutrisi**, bukan kriteria MADM.

@@ -36,12 +36,13 @@ export default function HomePage() {
             penyakit kronis — diabetes, hipertensi, gagal ginjal, dan penyakit
             jantung — menggunakan metode{" "}
             <strong className="text-teal-800">SAW</strong> dan{" "}
-            <strong className="text-teal-800">TOPSIS</strong> yang ditampilkan
-            berdampingan agar mudah dibandingkan.
+            <strong className="text-teal-800">TOPSIS</strong> dengan kriteria
+            dari parameter pasien (BB, TB, umur, budget).
           </p>
           <p className="mt-3 text-slate-600">
-            Bukan alat diagnosis medis, melainkan alat bantu rekomendasi berbasis
-            data gizi, harga, dan kemudahan bahan.
+            Bukan alat diagnosis medis. Kandungan gula, natrium, dan serat
+            ditampilkan sebagai informasi nutrisi pendukung — bukan sebagai
+            kriteria MADM.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg">
@@ -146,7 +147,8 @@ export default function HomePage() {
           <CardHeader>
             <CardTitle>Pemodelan MADM</CardTitle>
             <CardDescription>
-              {CRITERIA.length} kriteria · {ALTERNATIVES.length} alternatif menu
+              {CRITERIA.length} kriteria dari parameter pasien ·{" "}
+              {ALTERNATIVES.length} alternatif menu
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -158,8 +160,9 @@ export default function HomePage() {
                 <div>
                   <span className="font-semibold text-teal-800">{c.code}</span>{" "}
                   {c.name}
+                  <p className="mt-0.5 text-xs text-slate-400">{c.description}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center gap-2">
                   <Badge variant={c.type === "benefit" ? "benefit" : "cost"}>
                     {c.type}
                   </Badge>

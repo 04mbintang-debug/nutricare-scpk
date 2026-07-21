@@ -27,8 +27,8 @@ export function SawRankingTable({ results }: SawRankingTableProps) {
       <CardHeader>
         <CardTitle>Hasil SAW</CardTitle>
         <CardDescription>
-          Normalisasi linear + skor terbobot Vᵢ = Σ(wⱼ · rᵢⱼ). Geser tabel ke
-          samping di HP untuk melihat semua kolom.
+          Normalisasi linear + skor terbobot Vᵢ = Σ(wⱼ · rᵢⱼ). Benefit: C1–C3,
+          Cost: C4. Geser tabel ke samping di HP untuk melihat semua kolom.
         </CardDescription>
       </CardHeader>
       <CardContent className="min-w-0 overflow-hidden px-0 sm:px-6">

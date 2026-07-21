@@ -59,8 +59,8 @@ export default function TentangPage() {
         </h1>
         <p className="mt-2 max-w-2xl text-slate-600">
           Kedua metode termasuk Multi-Attribute Decision Making (MADM) yang
-          membantu memilih alternatif terbaik berdasarkan banyak kriteria
-          bertipe benefit maupun cost.
+          membantu memilih alternatif terbaik berdasarkan kriteria pasien:{" "}
+          kesesuaian BB, TB, umur (benefit), dan budget/harga (cost).
         </p>
       </div>
 

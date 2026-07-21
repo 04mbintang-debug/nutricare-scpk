@@ -1,56 +1,65 @@
-import { ALTERNATIVES, CRITERIA } from "./data";
-import type { Alternative, PatientInput, SawResult, TopsisResult } from "./types";
+import { ALTERNATIVES, CRITERIA, formatCurrency } from "./data";
+import type {
+  Alternative,
+  MadmValues,
+  PatientInput,
+  SawResult,
+  TopsisResult,
+} from "./types";
 
 export function generateReasons(
   alternative: Alternative,
+  madm: MadmValues,
   patient: PatientInput | null,
   method: "SAW" | "TOPSIS",
   score: number
 ): string[] {
   const reasons: string[] = [];
-  const { sugar, sodium, fiber, price, ease } = alternative.values;
+  const { fitWeight, fitHeight, fitAge, price } = madm;
+  const { sugar, sodium, fiber } = alternative.nutrition;
 
-  const sugars = ALTERNATIVES.map((a) => a.values.sugar);
-  const sodiums = ALTERNATIVES.map((a) => a.values.sodium);
-  const fibers = ALTERNATIVES.map((a) => a.values.fiber);
-  const prices = ALTERNATIVES.map((a) => a.values.price);
+  if (fitWeight >= 4) {
+    reasons.push(
+      `Kesesuaian BB tinggi (skor ${fitWeight}/5) — porsi/kalori selaras dengan berat badan pasien`
+    );
+  }
+  if (fitHeight >= 4) {
+    reasons.push(
+      `Kesesuaian TB tinggi (skor ${fitHeight}/5) — profil gizi mendukung kecukupan energi dari TB/IMT`
+    );
+  }
+  if (fitAge >= 4) {
+    reasons.push(
+      `Kesesuaian umur tinggi (skor ${fitAge}/5) — cocok dengan metabolisme kelompok usia`
+    );
+  }
 
-  if (sugar <= Math.min(...sugars) + 2) {
-    reasons.push(`Kandungan gula rendah (${sugar} g) — cocok untuk kontrol gula darah`);
-  }
-  if (sodium <= Math.min(...sodiums) + 40) {
-    reasons.push(`Natrium relatif rendah (${sodium} mg) — mendukung tekanan darah sehat`);
-  }
-  if (fiber >= Math.max(...fibers) - 2) {
-    reasons.push(`Serat tinggi (${fiber} g) — membantu kenyang lebih lama & pencernaan`);
-  }
   if (patient && price <= patient.budget) {
     reasons.push(
-      `Harga Rp ${price.toLocaleString("id-ID")} sesuai anggaran Rp ${patient.budget.toLocaleString("id-ID")}`
+      `Harga ${formatCurrency(price)} sesuai anggaran ${formatCurrency(patient.budget)}`
     );
-  } else if (price <= Math.min(...prices) + 8000) {
-    reasons.push(`Harga relatif terjangkau (Rp ${price.toLocaleString("id-ID")})`);
-  }
-  if (ease >= 4) {
-    reasons.push(`Bahan mudah diperoleh (skala kemudahan ${ease}/5)`);
+  } else if (price <= 40000) {
+    reasons.push(`Harga relatif terjangkau (${formatCurrency(price)})`);
+  } else if (patient && price > patient.budget) {
+    reasons.push(
+      `Harga ${formatCurrency(price)} melebihi anggaran — pertimbangkan trade-off dengan kriteria lain`
+    );
   }
 
-  if (patient?.disease === "Diabetes" && sugar <= 10) {
-    reasons.push("Profil gula mendukung manajemen diabetes");
+  // Nutrisi sebagai konteks pendukung (bukan kriteria MADM)
+  if (sugar <= 10) {
+    reasons.push(`Info nutrisi: gula relatif rendah (${sugar} g)`);
+  }
+  if (fiber >= 12) {
+    reasons.push(`Info nutrisi: serat tinggi (${fiber} g)`);
   }
   if (patient?.disease === "Hipertensi" && sodium <= 400) {
-    reasons.push("Profil natrium mendukung manajemen hipertensi (DASH-like)");
-  }
-  if (patient?.disease === "Gagal Ginjal" && sodium <= 400) {
-    reasons.push("Natrium terkendali — relevan untuk pantangan ginjal");
-  }
-  if (patient?.disease === "Penyakit Jantung" && fiber >= 12 && sodium <= 420) {
-    reasons.push("Kombinasi serat & natrium mendukung pola makan jantung sehat");
+    reasons.push(`Info nutrisi: natrium terkendali (${sodium} mg)`);
   }
 
   if (reasons.length === 0) {
     reasons.push(
-      `Skor ${method} ${score.toFixed(4)} menunjukkan keseimbangan kriteria yang baik secara keseluruhan`
+      `Skor ${method} ${score.toFixed(4)} menunjukkan keseimbangan kriteria BB, TB, umur, dan budget`
     );
   }
 
@@ -60,23 +69,54 @@ export function generateReasons(
 export function getWinnerReasons(
   saw: SawResult[],
   topsis: TopsisResult[],
-  patient: PatientInput | null
+  patient: PatientInput | null,
+  matrix: number[][]
 ) {
   const sawWinner = saw[0];
   const topsisWinner = topsis[0];
   const sawAlt = ALTERNATIVES.find((a) => a.id === sawWinner.id)!;
   const topsisAlt = ALTERNATIVES.find((a) => a.id === topsisWinner.id)!;
 
+  const sawIndex = ALTERNATIVES.findIndex((a) => a.id === sawWinner.id);
+  const topsisIndex = ALTERNATIVES.findIndex((a) => a.id === topsisWinner.id);
+
+  const sawMadm: MadmValues = {
+    fitWeight: matrix[sawIndex][0],
+    fitHeight: matrix[sawIndex][1],
+    fitAge: matrix[sawIndex][2],
+    price: matrix[sawIndex][3],
+  };
+  const topsisMadm: MadmValues = {
+    fitWeight: matrix[topsisIndex][0],
+    fitHeight: matrix[topsisIndex][1],
+    fitAge: matrix[topsisIndex][2],
+    price: matrix[topsisIndex][3],
+  };
+
   return {
     saw: {
       result: sawWinner,
       alternative: sawAlt,
-      reasons: generateReasons(sawAlt, patient, "SAW", sawWinner.score),
+      madm: sawMadm,
+      reasons: generateReasons(
+        sawAlt,
+        sawMadm,
+        patient,
+        "SAW",
+        sawWinner.score
+      ),
     },
     topsis: {
       result: topsisWinner,
       alternative: topsisAlt,
-      reasons: generateReasons(topsisAlt, patient, "TOPSIS", topsisWinner.preference),
+      madm: topsisMadm,
+      reasons: generateReasons(
+        topsisAlt,
+        topsisMadm,
+        patient,
+        "TOPSIS",
+        topsisWinner.preference
+      ),
     },
   };
 }
@@ -84,7 +124,10 @@ export function getWinnerReasons(
 export function describeCriteriaForUI() {
   return CRITERIA.map((c) => ({
     ...c,
-    typeLabel: c.type === "benefit" ? "Benefit (semakin tinggi semakin baik)" : "Cost (semakin rendah semakin baik)",
+    typeLabel:
+      c.type === "benefit"
+        ? "Benefit (semakin tinggi semakin baik)"
+        : "Cost (semakin rendah semakin baik)",
     weightPercent: `${(c.weight * 100).toFixed(0)}%`,
   }));
 }

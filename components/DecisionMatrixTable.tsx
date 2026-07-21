@@ -17,14 +17,26 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export function DecisionMatrixTable() {
+interface DecisionMatrixTableProps {
+  /** Matriks X hasil personalisasi pasien; default seed. */
+  matrix?: number[][];
+}
+
+export function DecisionMatrixTable({ matrix }: DecisionMatrixTableProps) {
+  const rows =
+    matrix ??
+    ALTERNATIVES.map((alt) =>
+      CRITERIA.map((c) => alt.values[c.key])
+    );
+
   return (
     <Card className="min-w-0 overflow-hidden">
       <CardHeader>
         <CardTitle>Matriks Keputusan</CardTitle>
         <CardDescription>
-          Data mentah alternatif menu berdasarkan 5 kriteria MADM (default seed
-          data). Geser ke samping di HP untuk melihat semua kolom.
+          Evaluasi alternatif pada kriteria pasien (C1–C4). Gula, natrium, dan
+          serat adalah info nutrisi, bukan kriteria MADM. Geser ke samping di HP
+          untuk melihat semua kolom.
         </CardDescription>
       </CardHeader>
       <CardContent className="min-w-0 overflow-hidden px-0 sm:px-6">
@@ -67,7 +79,7 @@ export function DecisionMatrixTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {ALTERNATIVES.map((alt) => (
+              {ALTERNATIVES.map((alt, i) => (
                 <TableRow key={alt.id}>
                   <TableCell className="font-semibold text-teal-800">
                     {alt.id}
@@ -75,13 +87,12 @@ export function DecisionMatrixTable() {
                   <TableCell className="whitespace-nowrap font-medium">
                     {alt.name}
                   </TableCell>
-                  <TableCell>{alt.values.sugar}</TableCell>
-                  <TableCell>{alt.values.sodium}</TableCell>
-                  <TableCell>{alt.values.fiber}</TableCell>
+                  <TableCell>{rows[i][0]}</TableCell>
+                  <TableCell>{rows[i][1]}</TableCell>
+                  <TableCell>{rows[i][2]}</TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {formatCurrency(alt.values.price)}
+                    {formatCurrency(rows[i][3])}
                   </TableCell>
-                  <TableCell>{alt.values.ease}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

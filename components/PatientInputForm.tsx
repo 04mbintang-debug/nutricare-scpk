@@ -252,10 +252,10 @@ export function PatientInputForm() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Bobot Kriteria</CardTitle>
+          <CardTitle>Bobot Kriteria (dari parameter pasien)</CardTitle>
           <CardDescription>
-            Sesuaikan prioritas kriteria. Total otomatis dinormalisasi menjadi
-            100% saat perhitungan.
+            Sesuaikan prioritas C1–C4 (BB, TB, umur, budget). Total otomatis
+            dinormalisasi menjadi 100% saat perhitungan.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

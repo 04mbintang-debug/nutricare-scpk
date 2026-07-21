@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Info, Loader2, RefreshCw } from "lucide-react";
-import { getDecisionMatrix, normalizeWeights } from "@/lib/data";
+import { buildDecisionMatrix, normalizeWeights } from "@/lib/data";
 import { calculateSAW } from "@/lib/saw";
 import { calculateTOPSIS } from "@/lib/topsis";
 import { getWinnerReasons } from "@/lib/reasons";
@@ -38,11 +38,12 @@ export function ResultsView() {
   const computation = useMemo(() => {
     if (!patient) return null;
     const weights = normalizeWeights(patient.weights);
-    const matrix = getDecisionMatrix();
+    // Matriks X dipersonalisasi dari BB, TB, umur pasien + harga menu
+    const matrix = buildDecisionMatrix(patient);
     const saw = calculateSAW(matrix, weights);
     const topsis = calculateTOPSIS(matrix, weights);
-    const winners = getWinnerReasons(saw, topsis.results, patient);
-    return { saw, topsis, winners, weights };
+    const winners = getWinnerReasons(saw, topsis.results, patient, matrix);
+    return { saw, topsis, winners, weights, matrix };
   }, [patient]);
 
   if (!ready || !patient || !computation) {
@@ -54,8 +55,9 @@ export function ResultsView() {
     );
   }
 
-  const { saw, topsis, winners } = computation;
-  const sameWinner = winners.saw.alternative.id === winners.topsis.alternative.id;
+  const { saw, topsis, winners, matrix } = computation;
+  const sameWinner =
+    winners.saw.alternative.id === winners.topsis.alternative.id;
 
   return (
     <div className="min-w-0 space-y-8">
@@ -65,7 +67,8 @@ export function ResultsView() {
             Hasil Rekomendasi
           </h1>
           <p className="mt-1 text-slate-600">
-            Perbandingan SAW & TOPSIS untuk profil{" "}
+            Perbandingan SAW & TOPSIS berdasarkan kriteria pasien (BB, TB, umur,
+            budget) untuk profil{" "}
             <span className="font-medium text-teal-800">{patient.disease}</span>
             , anggaran Rp {patient.budget.toLocaleString("id-ID")}.
           </p>
@@ -101,12 +104,14 @@ export function ResultsView() {
           method="SAW"
           result={winners.saw.result}
           alternative={winners.saw.alternative}
+          madm={winners.saw.madm}
           reasons={winners.saw.reasons}
         />
         <WinnerCard
           method="TOPSIS"
           result={winners.topsis.result}
           alternative={winners.topsis.alternative}
+          madm={winners.topsis.madm}
           reasons={winners.topsis.reasons}
         />
       </div>
@@ -133,7 +138,7 @@ export function ResultsView() {
         </Card>
       )}
 
-      <DecisionMatrixTable />
+      <DecisionMatrixTable matrix={matrix} />
 
       <div className="grid min-w-0 gap-6 xl:grid-cols-2">
         <SawRankingTable results={saw} />
@@ -153,20 +158,18 @@ export function ResultsView() {
           <p>
             <strong className="text-slate-800">SAW</strong> menormalisasi setiap
             kriteria secara linear (bagi max untuk benefit, min/nilai untuk
-            cost), lalu menjumlahkan hasil terbobot. Metode ini intuitif dan
-            cepat, tetapi sensitif terhadap skala ekstrem pada satu kriteria.
+            cost), lalu menjumlahkan hasil terbobot. Kriteria benefit: C1–C3
+            (kesesuaian BB/TB/umur); cost: C4 (harga).
           </p>
           <p>
             <strong className="text-slate-800">TOPSIS</strong> menormalisasi
             vektor, membentuk solusi ideal positif & negatif, lalu mengukur
-            kedekatan relatif tiap alternatif. Alternatif yang jauh dari solusi
-            buruk dan dekat ke solusi ideal akan unggul — bahkan jika skor
-            linear SAW-nya sedikit berbeda.
+            kedekatan relatif tiap alternatif terhadap solusi ideal.
           </p>
           <p>
-            Karena itu, ranking bisa berbeda meski data sama. Gunakan kedua
-            hasil sebagai bahan pertimbangan bersama ahli gizi atau dokter —
-            bukan sebagai diagnosis.
+            Gula, natrium, dan serat ditampilkan sebagai informasi nutrisi
+            pendukung — bukan sebagai kriteria MADM. Gunakan kedua hasil sebagai
+            bahan pertimbangan bersama ahli gizi atau dokter.
           </p>
         </CardContent>
       </Card>

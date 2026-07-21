@@ -1,12 +1,11 @@
-import { Candy, Droplets, Wheat, Wallet, ShoppingBasket } from "lucide-react";
+import { Scale, Ruler, CalendarDays, Wallet } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export const CRITERION_ICONS: Record<string, LucideIcon> = {
-  C1: Candy,
-  C2: Droplets,
-  C3: Wheat,
+  C1: Scale,
+  C2: Ruler,
+  C3: CalendarDays,
   C4: Wallet,
-  C5: ShoppingBasket,
 };
 
 export function RankBadge({ rank }: { rank: number }) {

@@ -1,5 +1,10 @@
 import { Trophy, Sparkles } from "lucide-react";
-import type { Alternative, SawResult, TopsisResult } from "@/lib/types";
+import type {
+  Alternative,
+  MadmValues,
+  SawResult,
+  TopsisResult,
+} from "@/lib/types";
 import { formatCurrency } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -14,6 +19,7 @@ interface WinnerCardProps {
   method: "SAW" | "TOPSIS";
   result: SawResult | TopsisResult;
   alternative: Alternative;
+  madm: MadmValues;
   reasons: string[];
 }
 
@@ -21,6 +27,7 @@ export function WinnerCard({
   method,
   result,
   alternative,
+  madm,
   reasons,
 }: WinnerCardProps) {
   const score =
@@ -50,17 +57,32 @@ export function WinnerCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-2 text-sm min-[480px]:grid-cols-3 sm:grid-cols-5">
-          <Metric label="Gula" value={`${alternative.values.sugar} g`} />
-          <Metric label="Natrium" value={`${alternative.values.sodium} mg`} />
-          <Metric label="Serat" value={`${alternative.values.fiber} g`} />
-          <Metric label="Harga" value={formatCurrency(alternative.values.price)} />
-          <Metric
-            label="Kemudahan"
-            value={`${alternative.values.ease}/5`}
-            className="col-span-2 min-[480px]:col-span-1 sm:col-span-1"
-          />
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Skor kriteria MADM
+          </p>
+          <div className="grid grid-cols-2 gap-2 text-sm min-[480px]:grid-cols-4">
+            <Metric label="C1 BB" value={`${madm.fitWeight}/5`} />
+            <Metric label="C2 TB" value={`${madm.fitHeight}/5`} />
+            <Metric label="C3 Umur" value={`${madm.fitAge}/5`} />
+            <Metric label="C4 Harga" value={formatCurrency(madm.price)} />
+          </div>
         </div>
+
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Informasi detail nutrisi (bukan kriteria)
+          </p>
+          <div className="grid grid-cols-3 gap-2 text-sm">
+            <Metric label="Gula" value={`${alternative.nutrition.sugar} g`} />
+            <Metric
+              label="Natrium"
+              value={`${alternative.nutrition.sodium} mg`}
+            />
+            <Metric label="Serat" value={`${alternative.nutrition.fiber} g`} />
+          </div>
+        </div>
+
         <div>
           <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-slate-800">
             <Sparkles className="h-4 w-4 text-teal-600" />
